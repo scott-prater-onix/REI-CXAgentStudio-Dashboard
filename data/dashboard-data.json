@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T19:47:07.304509+00:00",
+  "generated_at": "2026-09-10T20:03:30.852837+00:00",
   "project_plan": {
     "sheet_name": "REI | Project Plan",
     "columns": [
@@ -426,7 +426,7 @@
         "Risk": true,
         "Task Name": "Confirm channel strategy & language support (EN-US / ES-MX)",
         "Status": "Not Started",
-        "Assigned To": "Milad Tabrizi",
+        "Assigned To": "Javier Pina",
         "Start Date": "2026-09-03T08:00:00",
         "End Date": "2026-09-15T16:59:59",
         "%": "0%",
@@ -1212,7 +1212,7 @@
         "Description": "Scott to calculate time and resource requirements for the project deliverables",
         "Assigned To": "Scott Prater",
         "Date Assigned": "2026-09-03",
-        "Due": null,
+        "Due": "2026-09-16",
         "Duration": null,
         "Priority": null,
         "Progress": null,
@@ -1228,7 +1228,7 @@
         "Description": "Scott to create the project schedule based on the delivery estimates.",
         "Assigned To": "Scott Prater",
         "Date Assigned": "2026-09-03",
-        "Due": null,
+        "Due": "2026-09-10",
         "Duration": null,
         "Priority": null,
         "Progress": null,
@@ -1244,7 +1244,7 @@
         "Description": "Scott to schedule a discussion around rollout strategy and parallel testing options.",
         "Assigned To": "Scott Prater",
         "Date Assigned": "2026-09-04",
-        "Due": null,
+        "Due": "2026-09-16",
         "Duration": null,
         "Priority": null,
         "Progress": null,
@@ -1260,7 +1260,7 @@
         "Description": "Scott to create a RAID log to track risks, actions, and issues throughout the project.",
         "Assigned To": "Scott Prater",
         "Date Assigned": "2026-09-03",
-        "Due": null,
+        "Due": "2026-09-10",
         "Duration": null,
         "Priority": null,
         "Progress": null,
@@ -1379,20 +1379,6 @@
         "Done": null,
         "Notes": null,
         "_row_id": 7359549535813508
-      }
-    ]
-  },
-  "project_comment": {
-    "sheet_name": "Definity | Project Comment",
-    "columns": [
-      "Health",
-      "Comments"
-    ],
-    "rows": [
-      {
-        "Health": "Green",
-        "Comments": "Definity issued Project Termination Notice - REI",
-        "_row_id": 2906934242049924
       }
     ]
   }
