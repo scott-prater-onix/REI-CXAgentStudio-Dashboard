@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Definity CCaaS Implementation Project Status Dashboard</title>
+<title>REI CX Agent Studio Implementation Project Status Dashboard</title>
 <style>
   :root {
     --navy: #1F2A3D;
@@ -471,7 +471,7 @@
 
 <header>
   <div>
-    <h1 id="dash-title">Definity CCaaS Implementation Project Status Dashboard</h1>
+    <h1 id="dash-title">REI CX Agent Studio Implementation Project Status Dashboard</h1>
     <div class="subtitle" id="dash-subtitle">Loading…</div>
   </div>
   <div class="meta" id="dash-meta"></div>
@@ -539,14 +539,16 @@ const PLAN_PCT_COL = ["% Complete", "Percent Complete", "Completion", "%"];
 // plan is organized with section-header rows like "Workstream 1: Project Management"
 // followed by their tasks as regular rows underneath. This pattern detects those
 // header rows so tasks can be grouped by the section they fall under.
-// Also matches combined/range headers like "Workstreams 6-8: AI Agents / Insights".
-const WORKSTREAM_HEADER_RE = /^workstreams?\s*\d+(?:\s*-\s*\d+)?\s*:\s*(.+)$/i;
-// "Billing Milestones" is its own section header row in the sheet, but unlike the
+// Also matches combined/range/"&"/"and" headers like "Workstreams 6-8: AI Agents /
+// Insights" or "Workstream 2 & 3: GECX Conversational Agents (Chat) & Gladly
+// Integration" (REI's plan combines two workstreams under one header row).
+const WORKSTREAM_HEADER_RE = /^workstreams?\s*\d+(?:\s*(?:-|&|and)\s*\d+)?\s*:\s*(.+)$/i;
+// "Billing Milestone(s)" is its own section header row in the sheet, but unlike the
 // others it has no "Workstream N:" prefix — so without this it silently gets folded
-// into whichever numbered workstream happens to precede it (currently Workstream 10).
-// It's billing-specific, not part of that workstream's actual scope, so it's treated
-// as its own section here.
-const BILLING_MILESTONES_HEADER_RE = /^billing milestones$/i;
+// into whichever numbered workstream happens to precede it. It's billing-specific,
+// not part of that workstream's actual scope, so it's treated as its own section
+// here. Matches both singular ("Billing Milestone", used by REI) and plural.
+const BILLING_MILESTONES_HEADER_RE = /^billing milestones?$/i;
 // Sub-section headers used inconsistently within some workstreams — not every
 // workstream has these, so grouping falls back to a flat task list where absent.
 const PHASE_HEADER_RE = /^phase\s*\d+\s*:\s*(.+)$/i;
@@ -555,10 +557,16 @@ const PLAN_OWNER_COL = ["Owner", "Assigned To"];
 const PLAN_DUE_COL = ["Due Date", "End Date"];
 
 const RAID_TYPE_COL = ["Type", "RAID Type", "Category"];
-const RAID_DESC_COL = ["Description", "Title", "Summary"];
+// REI's RAID log splits each item into a short "Name" (title) and a longer
+// "Description" — both are shown together in the table (see raidTitle()).
+const RAID_NAME_COL = ["Name", "Title"];
+const RAID_DESC_COL = ["Description", "Summary"];
 const RAID_OWNER_COL = ["Owner", "Assigned To"];
 const RAID_MIT_COL = ["Mitigation / Note", "Mitigation", "Notes", "Details"];
+// Some sheets track RAID status as text ("Open"/"Closed"); REI's instead uses a
+// boolean "Done" checkbox column. Both are supported — see isRaidDone().
 const RAID_STATUS_COL = ["Status"];
+const RAID_DONE_COL = ["Done"];
 
 // ---- Project Comment sheet (PM-entered health + comments) ----
 // Pulled by pull_smartsheet_data.py from a Smartsheet the PM edits directly
@@ -575,6 +583,22 @@ function firstMatch(row, candidates) {
     if (row[key] !== undefined && row[key] !== null && row[key] !== "") return row[key];
   }
   return null;
+}
+
+// True if a RAID row is closed out — either a text Status column saying so, or
+// REI's boolean "Done" checkbox column being checked.
+function isRaidDone(row) {
+  const status = String(firstMatch(row, RAID_STATUS_COL) || "").toLowerCase();
+  if (status.includes("done") || status.includes("closed") || status.includes("complete")) return true;
+  const done = firstMatch(row, RAID_DONE_COL);
+  return done === true || String(done).toLowerCase() === "true";
+}
+
+// Smartsheet RAID logs are sometimes grouped with blank rows that carry only an
+// "Org Owner" grouping value and no actual item — these aren't real RAID entries
+// and should be excluded rather than rendered as empty table rows.
+function isRaidItemRow(row) {
+  return Boolean(firstMatch(row, RAID_NAME_COL) || firstMatch(row, RAID_DESC_COL));
 }
 
 function pctToNumber(raw) {
@@ -706,14 +730,18 @@ function renderRaid(raidRows) {
   }
   document.getElementById("raid-body").innerHTML = raidRows.map(row => {
     const type = firstMatch(row, RAID_TYPE_COL) || "Item";
-    const desc = firstMatch(row, RAID_DESC_COL) || "—";
+    const name = firstMatch(row, RAID_NAME_COL);
+    const desc = firstMatch(row, RAID_DESC_COL);
     const owner = firstMatch(row, RAID_OWNER_COL) || "—";
     const mit = firstMatch(row, RAID_MIT_COL) || "—";
-    const status = firstMatch(row, RAID_STATUS_COL) || "Open";
+    const status = firstMatch(row, RAID_STATUS_COL) || (isRaidDone(row) ? "Closed" : "Open");
+    const descHtml = name && desc
+      ? `<strong>${escapeHtml(name)}</strong><br>${escapeHtml(desc)}`
+      : escapeHtml(name || desc || "—");
     return `
       <tr>
         <td><span class="type-tag ${typeClass(type)}">${escapeHtml(type)}</span></td>
-        <td class="raid-desc">${escapeHtml(desc)}</td>
+        <td class="raid-desc">${descHtml}</td>
         <td class="raid-owner">${escapeHtml(owner)}</td>
         <td class="raid-mit">${escapeHtml(mit)}</td>
         <td><span class="status-tag">${escapeHtml(status)}</span></td>
@@ -861,7 +889,7 @@ function computeWorkstreams(planRows) {
     if (wsMatch || billingMatch) {
       // This row is itself a section header (e.g. "Workstream 1: Project Management", or
       // "Billing Milestones") — start a new group and don't count the header row as a task.
-      currentSection = wsMatch ? wsMatch[1].trim() : "Billing Milestones";
+      currentSection = wsMatch ? wsMatch[1].trim() : taskName.trim();
       currentPhase = null;
       currentWave = null;
       const isFirstSection = !groups[currentSection] && order.length === 0;
@@ -951,10 +979,7 @@ function normalizeHealth(raw) {
 function hydrate(data) {
   const planRows = (data.project_plan && data.project_plan.rows) || [];
   const allRaidRows = (data.raid_log && data.raid_log.rows) || [];
-  const raidRows = allRaidRows.filter(row => {
-    const status = String(firstMatch(row, RAID_STATUS_COL) || "").toLowerCase();
-    return !(status.includes("done") || status.includes("closed") || status.includes("complete"));
-  });
+  const raidRows = allRaidRows.filter(row => isRaidItemRow(row) && !isRaidDone(row));
   const dataDate = data.generated_at ? new Date(data.generated_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "—";
 
   document.getElementById("dash-subtitle").textContent =
