@@ -2,9 +2,6 @@
 """
 Pulls the project plan and RAID log sheets from Smartsheet in a single run
 and writes the combined data to a JSON file for the dashboard to consume.
-Optionally also pulls a "Project Comment" sheet (Health / Comments columns)
-that the PM edits directly in Smartsheet to set the overall program status
-pill and post stakeholder-facing comments on the dashboard.
 
 Requires:
     pip install smartsheet-python-sdk
@@ -13,9 +10,7 @@ Environment variables:
     SMARTSHEET_TOKEN        - Smartsheet API access token
     PROJECT_PLAN_SHEET_ID    - Sheet ID for the project plan
     RAID_LOG_SHEET_ID        - Sheet ID for the RAID log
-    PROJECT_COMMENT_SHEET_ID - (optional) Sheet ID for the PM's Project Comment
-                                sheet. If unset, the dashboard just falls back
-                                to its auto-calculated health heuristic.
+
 """
 
 import os
@@ -78,17 +73,6 @@ def main():
         "raid_log": sheet_to_dict(raid_sheet),
     }
 
-    # Project Comment sheet is optional so this script keeps working before
-    # the secret is configured — the dashboard just falls back to its
-    # auto-calculated health heuristic and shows no PM comments.
-    comment_sheet_id = os.environ.get("PROJECT_COMMENT_SHEET_ID")
-    if comment_sheet_id:
-        print("Fetching project comment sheet...")
-        comment_sheet = client.Sheets.get_sheet(comment_sheet_id)
-        combined["project_comment"] = sheet_to_dict(comment_sheet)
-    else:
-        print("PROJECT_COMMENT_SHEET_ID not set — skipping project comment sheet.")
-
     output_path = os.environ.get("OUTPUT_PATH", "data/dashboard-data.json")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -98,9 +82,6 @@ def main():
     print(f"Wrote combined data to {output_path}")
     print(f"  Project plan rows: {len(combined['project_plan']['rows'])}")
     print(f"  RAID log rows: {len(combined['raid_log']['rows'])}")
-    if "project_comment" in combined:
-        print(f"  Project comment rows: {len(combined['project_comment']['rows'])}")
-
 
 if __name__ == "__main__":
     main()
