@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Definity CCaaS Implementation Project Status Dashboard</title>
+<style>
+  :root {
+    --navy: #1F2A3D;
+    --navy-mid: #2E4B72;
+    --blue-light: #5B7FB5;
+    --bg: #FFFFFF;
+    --panel: #F1F3F7;
+    --panel-border: #E4E8F0;
+    --text: #1F2A3D;
+    --muted: #6E7A8E;
+    --green: #2E9E5B;
+    --green-bg: #E3F4EA;
+    --amber: #E8A33D;
+    --amber-bg: #FBF0DA;
+    --red: #E8503A;
+    --red-bg: #FBE7E3;
+    --font: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    padding: 32px 40px 56px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--panel-border);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  header .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .meta {
+    text-align: right;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .meta strong { color: var(--navy); }
+
+  /* ---------- Section shell ---------- */
+  section { margin-bottom: 32px; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--navy-mid);
+    margin-bottom: 12px;
+  }
+
+  /* ---------- Executive summary ---------- */
+  .exec-summary {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text);
+  }
+
+  .exec-summary strong { color: var(--navy-mid); }
+
+  /* ---------- Program health pills ---------- */
+  .health-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .health-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .health-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+  .dot-red { background: var(--red); }
+
+  .health-label { color: var(--muted); font-weight: 500; margin-right: 2px; }
+
+  /* ---------- Workstream cards ---------- */
+  .ws-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .ws-card {
+    background: var(--bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .ws-card .ws-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .ws-card .ws-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 4px 0 2px;
+  }
+
+  .ws-card .ws-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .ws-card .ws-pct {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--navy-mid);
+  }
+
+  .ws-card .ws-bar-track {
+    background: var(--panel);
+    border-radius: 4px;
+    height: 6px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .ws-card .ws-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--navy-mid);
+  }
+
+  .ws-card .ws-source {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  /* ---------- KPI strip ---------- */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    background: var(--panel-border);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .kpi {
+    background: var(--bg);
+    padding: 16px 18px;
+  }
+
+  .kpi .value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .kpi .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .kpi.accent-green .value { color: var(--green); }
+  .kpi.accent-amber .value { color: var(--amber); }
+  .kpi.accent-red .value { color: var(--red); }
+
+  /* ---------- Workstream delivery breakdown (bars) ---------- */
+  .breakdown-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-row .bd-label {
+    font-size: 13px;
+    font-weight: 600;
+    width: 240px;
+    flex-shrink: 0;
+    color: var(--navy);
+  }
+
+  .breakdown-row .bd-track {
+    flex: 1;
+    background: var(--panel);
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+  }
+
+  .breakdown-row .bd-fill {
+    height: 100%;
+    background: var(--navy-mid);
+    border-radius: 4px;
+  }
+
+  .breakdown-row .bd-pct {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy-mid);
+    width: 44px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ---------- RAID table ---------- */
+  .raid-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .raid-table th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--panel-border);
+  }
+
+  .raid-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--panel-border);
+    vertical-align: top;
+  }
+
+  .raid-table tr:hover td { background: var(--panel); }
+
+  .type-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  .type-risk { background: var(--red-bg); color: var(--red); }
+  .type-issue { background: var(--amber-bg); color: var(--amber); }
+  .type-decision { background: var(--panel); color: var(--navy-mid); }
+  .type-action { background: var(--green-bg); color: var(--green); }
+
+  .status-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .raid-desc { color: var(--text); }
+  .raid-owner { color: var(--muted); white-space: nowrap; }
+  .raid-mit { color: var(--muted); max-width: 320px; }
+
+  /* ---------- Next steps by phase ---------- */
+  .phase-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .phase-col h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    padding: 6px 0;
+    color: var(--text);
+  }
+
+  .step-check {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .step-check.done { background: var(--green); }
+  .step-check.pending { background: var(--panel-border); color: var(--muted); }
+
+  .phase-group { margin-top: 4px; }
+
+  .phase-group h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--navy-mid);
+    margin: 10px 0 2px;
+  }
+
+  .wave-group h5 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 6px 0 2px 10px;
+  }
+
+  .wave-group .step-item,
+  .phase-group > .step-item { margin-left: 10px; }
+
+  .more-note {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    padding: 4px 0 0 10px;
+  }
+
+  .empty-state {
+    padding: 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* ---------- PM Notes panel ---------- */
+  .pm-notes-panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .pm-notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pm-notes-meta { font-size: 11px; color: var(--muted); }
+
+  .pm-health-select { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+
+  .pm-health-opt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--panel-border);
+    background: var(--bg);
+    color: var(--muted);
+  }
+
+  .pm-health-opt.active-green { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+  .pm-health-opt.active-amber { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); }
+  .pm-health-opt.active-red { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+
+  .pm-notes-text { font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; }
+
+  .pm-comment-history {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--panel-border);
+  }
+
+  .pm-comment-history .pm-history-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .pm-comment-item {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 5px 0;
+  }
+
+  .pm-comment-item .health-dot { flex-shrink: 0; }
+  .pm-comment-item span:last-child { color: var(--text); }
+
+  footer {
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--panel-border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1 id="dash-title">Definity CCaaS Implementation Project Status Dashboard</h1>
+    <div class="subtitle" id="dash-subtitle">Loading…</div>
+  </div>
+  <div class="meta" id="dash-meta"></div>
+</header>
+
+<section>
+  <div class="section-title">Executive Summary</div>
+  <div class="exec-summary" id="exec-summary">Loading executive summary…</div>
+</section>
+
+<section>
+  <div class="section-title">Program Health</div>
+  <div class="health-row" id="health-row"></div>
+</section>
+
+<section>
+  <div class="section-title">Program Manager Notes</div>
+  <div class="pm-notes-panel" id="pm-notes-panel">Loading…</div>
+</section>
+
+<section>
+  <div class="section-title">Workstream Completion</div>
+  <div class="ws-grid" id="ws-grid"></div>
+</section>
+
+<section>
+  <div class="kpi-strip" id="kpi-strip"></div>
+</section>
+
+<section>
+  <div class="section-title">Workstream Delivery Breakdown</div>
+  <div id="breakdown-body"></div>
+</section>
+
+<section>
+  <div class="section-title">RAID Log — Risks, Issues &amp; Decisions</div>
+  <table class="raid-table">
+    <thead>
+      <tr><th>Type</th><th>Description</th><th>Owner</th><th>Mitigation / Note</th><th>Status</th></tr>
+    </thead>
+    <tbody id="raid-body"></tbody>
+  </table>
+</section>
+
+<section>
+  <div class="section-title">Next Steps by Phase</div>
+  <div class="phase-columns" id="phase-columns"></div>
+</section>
+
+<section>
+  <div class="section-title">Completed Tasks</div>
+  <div class="phase-columns" id="completed-columns"></div>
+</section>
+
+<footer id="footer-note">Source: Project Plan &amp; RAID (Smartsheet)</footer>
+
+<script>
+// ---- Column name candidates — adjust to match your actual Smartsheet column titles ----
+const PLAN_WORKSTREAM_COL = ["Workstream", "Phase", "Track"];
+const PLAN_TASK_COL = ["Task Name", "Task", "Name"];
+const PLAN_STATUS_COL = ["Status"];
+const PLAN_PCT_COL = ["% Complete", "Percent Complete", "Completion", "%"];
+
+// Some Smartsheet plans don't have a dedicated "Workstream" column — instead the
+// plan is organized with section-header rows like "Workstream 1: Project Management"
+// followed by their tasks as regular rows underneath. This pattern detects those
+// header rows so tasks can be grouped by the section they fall under.
+// Also matches combined/range headers like "Workstreams 6-8: AI Agents / Insights".
+const WORKSTREAM_HEADER_RE = /^workstreams?\s*\d+(?:\s*-\s*\d+)?\s*:\s*(.+)$/i;
+// "Billing Milestones" is its own section header row in the sheet, but unlike the
+// others it has no "Workstream N:" prefix — so without this it silently gets folded
+// into whichever numbered workstream happens to precede it (currently Workstream 10).
+// It's billing-specific, not part of that workstream's actual scope, so it's treated
+// as its own section here.
+const BILLING_MILESTONES_HEADER_RE = /^billing milestones$/i;
+// Sub-section headers used inconsistently within some workstreams — not every
+// workstream has these, so grouping falls back to a flat task list where absent.
+const PHASE_HEADER_RE = /^phase\s*\d+\s*:\s*(.+)$/i;
+const WAVE_HEADER_RE = /^wave\s*\d+\s+(.+)$/i;
+const PLAN_OWNER_COL = ["Owner", "Assigned To"];
+const PLAN_DUE_COL = ["Due Date", "End Date"];
+
+const RAID_TYPE_COL = ["Type", "RAID Type", "Category"];
+const RAID_DESC_COL = ["Description", "Title", "Summary"];
+const RAID_OWNER_COL = ["Owner", "Assigned To"];
+const RAID_MIT_COL = ["Mitigation / Note", "Mitigation", "Notes", "Details"];
+const RAID_STATUS_COL = ["Status"];
+
+// ---- Project Comment sheet (PM-entered health + comments) ----
+// Pulled by pull_smartsheet_data.py from a Smartsheet the PM edits directly
+// (same sheet-based source of truth as everything else on this dashboard),
+// so there's no separate manual file and no risk of it being overwritten —
+// it just comes down with the rest of the scheduled pull.
+const COMMENT_HEALTH_COL = ["Health"];
+const COMMENT_TEXT_COL = ["Comments", "Comment"];
+
+let lastWorkstreams = [];
+
+function firstMatch(row, candidates) {
+  for (const key of candidates) {
+    if (row[key] !== undefined && row[key] !== null && row[key] !== "") return row[key];
+  }
+  return null;
+}
+
+function pctToNumber(raw) {
+  if (raw === null || raw === undefined) return null;
+  const n = parseFloat(String(raw).replace("%", ""));
+  if (isNaN(n)) return null;
+  return n <= 1 ? n * 100 : n;
+}
+
+function statusHealth(rows, statusKey) {
+  // Simple heuristic: any "at risk"/"amber"/"blocked" status -> Amber, else Green
+  for (const row of rows) {
+    const s = String(firstMatch(row, PLAN_STATUS_COL) || "").toLowerCase();
+    if (s.includes("risk") || s.includes("amber") || s.includes("blocked") || s.includes("delay")) return "amber";
+  }
+  return "green";
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[m]));
+}
+
+function renderProjectComment(projectComment) {
+  const panel = document.getElementById("pm-notes-panel");
+  const rows = (projectComment && projectComment.rows) || [];
+  const healthLabel = h => h === "amber" ? "Amber" : h.charAt(0).toUpperCase() + h.slice(1);
+
+  if (rows.length === 0) {
+    panel.innerHTML = `<div class="pm-notes-text" style="color:var(--muted)">No comments yet — add a row to the Project Comment sheet in Smartsheet.</div>`;
+    return;
+  }
+
+  // Newest entry is the last row added to the sheet.
+  const latest = rows[rows.length - 1];
+  const earlier = rows.slice(0, -1).reverse();
+  const health = normalizeHealth(firstMatch(latest, COMMENT_HEALTH_COL)) || "green";
+  const comment = firstMatch(latest, COMMENT_TEXT_COL) || "";
+
+  panel.innerHTML = `
+    <div class="pm-notes-header">
+      <span class="pm-notes-meta">Source: Smartsheet · ${escapeHtml(projectComment.sheet_name || "Project Comment")}</span>
+    </div>
+    <div class="pm-health-select">
+      <span class="pm-health-opt active-${health}">
+        <span class="health-dot dot-${health}"></span>${healthLabel(health)}
+      </span>
+    </div>
+    <div class="pm-notes-text">${comment ? escapeHtml(comment).replace(/\n/g, "<br>") : '<span style="color:var(--muted)">No comment text on the latest entry.</span>'}</div>
+    ${earlier.length > 0 ? `
+      <div class="pm-comment-history">
+        <div class="pm-history-label">Earlier updates</div>
+        ${earlier.map(r => {
+          const h = normalizeHealth(firstMatch(r, COMMENT_HEALTH_COL)) || "green";
+          const c = firstMatch(r, COMMENT_TEXT_COL) || "";
+          return `<div class="pm-comment-item"><span class="health-dot dot-${h}"></span><span>${escapeHtml(c)}</span></div>`;
+        }).join("")}
+      </div>` : ""}
+  `;
+}
+
+function renderHealth(overallHealth, workstreams) {
+  const items = [
+    { label: "Overall Program", health: overallHealth },
+    ...workstreams.map(w => ({ label: w.name, health: w.health }))
+  ];
+  document.getElementById("health-row").innerHTML = items.map(i => `
+    <div class="health-pill">
+      <span class="health-dot dot-${i.health}"></span>
+      <span class="health-label">${escapeHtml(i.label)}</span>
+      <span style="color:var(--navy)">${i.health === "green" ? "Green" : i.health === "amber" ? "Amber" : "Red"}</span>
+    </div>
+  `).join("");
+}
+
+function renderWorkstreams(workstreams, dataDate) {
+  document.getElementById("ws-grid").innerHTML = workstreams.map(w => `
+    <div class="ws-card">
+      <div class="ws-label">Workstream</div>
+      <div class="ws-name">${escapeHtml(w.name)}</div>
+      <div class="ws-sub">${w.total} tasks</div>
+      <div class="ws-pct">${w.pct}%</div>
+      <div class="ws-bar-track"><div class="ws-bar-fill" style="width:${w.pct}%"></div></div>
+      <div class="ws-source">Smartsheet · ${escapeHtml(dataDate)}</div>
+    </div>
+  `).join("");
+}
+
+function renderKpis(stats) {
+  const kpis = [
+    { label: "Overall Complete", value: stats.overallPct + "%", accent: "" },
+    { label: "Tasks Complete", value: `${stats.complete} / ${stats.total}`, accent: "accent-green" },
+    { label: "In Progress", value: stats.inProgress, accent: "accent-amber" },
+    { label: "Not Started", value: stats.notStarted, accent: "" },
+  ];
+  document.getElementById("kpi-strip").innerHTML = kpis.map(k => `
+    <div class="kpi ${k.accent}">
+      <div class="value">${k.value}</div>
+      <div class="label">${k.label}</div>
+    </div>
+  `).join("");
+}
+
+function renderBreakdown(workstreams) {
+  document.getElementById("breakdown-body").innerHTML = workstreams.map(w => `
+    <div class="breakdown-row">
+      <div class="bd-label">${escapeHtml(w.name)}</div>
+      <div class="bd-track"><div class="bd-fill" style="width:${w.pct}%"></div></div>
+      <div class="bd-pct">${w.pct}%</div>
+    </div>
+  `).join("");
+}
+
+function typeClass(type) {
+  const t = String(type || "").toLowerCase();
+  if (t.startsWith("risk")) return "type-risk";
+  if (t.startsWith("issue")) return "type-issue";
+  if (t.startsWith("decision")) return "type-decision";
+  if (t.startsWith("action")) return "type-action";
+  return "type-decision";
+}
+
+function renderRaid(raidRows) {
+  if (raidRows.length === 0) {
+    document.getElementById("raid-body").innerHTML =
+      `<tr><td colspan="5"><div class="empty-state">No RAID items found</div></td></tr>`;
+    return;
+  }
+  document.getElementById("raid-body").innerHTML = raidRows.map(row => {
+    const type = firstMatch(row, RAID_TYPE_COL) || "Item";
+    const desc = firstMatch(row, RAID_DESC_COL) || "—";
+    const owner = firstMatch(row, RAID_OWNER_COL) || "—";
+    const mit = firstMatch(row, RAID_MIT_COL) || "—";
+    const status = firstMatch(row, RAID_STATUS_COL) || "Open";
+    return `
+      <tr>
+        <td><span class="type-tag ${typeClass(type)}">${escapeHtml(type)}</span></td>
+        <td class="raid-desc">${escapeHtml(desc)}</td>
+        <td class="raid-owner">${escapeHtml(owner)}</td>
+        <td class="raid-mit">${escapeHtml(mit)}</td>
+        <td><span class="status-tag">${escapeHtml(status)}</span></td>
+      </tr>`;
+  }).join("");
+}
+
+function isTaskDone(row) {
+  const s = String(firstMatch(row, PLAN_STATUS_COL) || "").toLowerCase();
+  return s.includes("complete") || s.includes("done") || s.includes("closed") || s.includes("cancel");
+}
+
+// Keeps only tasks matching `keep(row)` in a workstream tree, dropping any
+// phase/wave that ends up empty as a result.
+function filterTree(tree, keep) {
+  const tasks = tree.tasks.filter(keep);
+  const phases = tree.phases.map(p => {
+    const pTasks = p.tasks.filter(keep);
+    const waves = p.waves
+      .map(w => ({ name: w.name, tasks: w.tasks.filter(keep) }))
+      .filter(w => w.tasks.length > 0);
+    return { name: p.name, tasks: pTasks, waves };
+  }).filter(p => p.tasks.length > 0 || p.waves.length > 0);
+  return { tasks, phases };
+}
+
+// Renders a workstream's tree (workstream → phase → wave → task) as nested checklist
+// HTML within a shared item budget, so huge workstreams don't blow out the column —
+// shows a "+N more" note instead. `checkClass`/`checkMark` control how each item's
+// checkbox looks (pending vs done).
+function renderTreeHtml(tree, budget, checkClass, checkMark) {
+  function taskItem(t) {
+    const name = firstMatch(t, PLAN_TASK_COL) || "Untitled task";
+    return `
+      <div class="step-item">
+        <span class="step-check ${checkClass}">${checkMark}</span>
+        <span>${escapeHtml(name)}</span>
+      </div>`;
+  }
+
+  let html = "";
+  let shown = 0;
+
+  const countTasks = node => (node.tasks ? node.tasks.length : 0)
+    + (node.phases || []).reduce((sum, p) => sum + countTasks(p), 0)
+    + (node.waves || []).reduce((sum, w) => sum + countTasks(w), 0);
+  const total = countTasks(tree);
+
+  for (const t of tree.tasks) {
+    if (shown >= budget) break;
+    html += taskItem(t);
+    shown++;
+  }
+  for (const phase of tree.phases) {
+    if (shown >= budget) break;
+    if (phase.name) html += `<div class="phase-group"><h4>${escapeHtml(phase.name)}</h4></div>`;
+    for (const t of phase.tasks) {
+      if (shown >= budget) break;
+      html += taskItem(t);
+      shown++;
+    }
+    for (const wave of phase.waves) {
+      if (shown >= budget) break;
+      html += `<div class="wave-group"><h5>${escapeHtml(wave.name)}</h5></div>`;
+      for (const t of wave.tasks) {
+        if (shown >= budget) break;
+        html += taskItem(t);
+        shown++;
+      }
+    }
+  }
+  if (total > shown) {
+    html += `<div class="more-note">+${total - shown} more task${total - shown === 1 ? "" : "s"}</div>`;
+  }
+  return html;
+}
+
+function renderPhases(workstreams) {
+  // Groups NOT-YET-COMPLETE tasks by workstream → phase → wave and shows them as a nested checklist.
+  // Completed tasks are moved to the "Completed Tasks" section instead (see renderCompleted).
+  const container = document.getElementById("phase-columns");
+  if (workstreams.length === 0) {
+    container.innerHTML = `<div class="empty-state">No phase data found</div>`;
+    return;
+  }
+
+  const MAX_ITEMS_PER_COLUMN = 14;
+
+  container.innerHTML = workstreams.map(w => {
+    const incompleteTree = w.tree ? filterTree(w.tree, t => !isTaskDone(t)) : null;
+    const body = incompleteTree ? renderTreeHtml(incompleteTree, MAX_ITEMS_PER_COLUMN, "pending", "") : "";
+    return `
+      <div class="phase-col">
+        <h3>${escapeHtml(w.name)}</h3>
+        ${body || '<div class="empty-state">All tasks complete</div>'}
+      </div>`;
+  }).join("");
+}
+
+function renderCompleted(workstreams) {
+  // Groups COMPLETED tasks by workstream → phase → wave, same layout as Next Steps by Phase.
+  const container = document.getElementById("completed-columns");
+  if (workstreams.length === 0) {
+    container.innerHTML = `<div class="empty-state">No completed tasks yet</div>`;
+    return;
+  }
+
+  const MAX_ITEMS_PER_COLUMN = 14;
+
+  container.innerHTML = workstreams.map(w => {
+    const completedTree = w.tree ? filterTree(w.tree, t => isTaskDone(t)) : null;
+    const body = completedTree ? renderTreeHtml(completedTree, MAX_ITEMS_PER_COLUMN, "done", "✓") : "";
+    return `
+      <div class="phase-col">
+        <h3>${escapeHtml(w.name)}</h3>
+        ${body || '<div class="empty-state">No completed tasks yet</div>'}
+      </div>`;
+  }).join("");
+}
+
+function computeWorkstreams(planRows) {
+  const groups = {};       // name -> flat array of leaf task rows (for stats/pct/health)
+  const trees = {};        // name -> { tasks: [], phases: [{ name, tasks: [], waves: [{ name, tasks: [] }] }] }
+  const order = [];
+  let currentSection = null; // current workstream name
+  let currentPhase = null;   // current phase node within currentSection's tree, or null
+  let currentWave = null;    // current wave node within currentPhase, or null
+  const preHeaderRows = []; // rows that appear before any header — folded into the first workstream
+
+  function newTree() { return { tasks: [], phases: [] }; }
+  function addTask(row) {
+    if (currentWave) currentWave.tasks.push(row);
+    else if (currentPhase) currentPhase.tasks.push(row);
+    else trees[currentSection].tasks.push(row);
+    groups[currentSection].push(row);
+  }
+
+  for (const row of planRows) {
+    const taskName = String(firstMatch(row, PLAN_TASK_COL) || "");
+    const wsMatch = taskName.match(WORKSTREAM_HEADER_RE);
+    const billingMatch = !wsMatch && BILLING_MILESTONES_HEADER_RE.test(taskName.trim());
+    const phaseMatch = (!wsMatch && !billingMatch) ? taskName.match(PHASE_HEADER_RE) : null;
+    const waveMatch = (!wsMatch && !billingMatch && !phaseMatch) ? taskName.match(WAVE_HEADER_RE) : null;
+
+    if (wsMatch || billingMatch) {
+      // This row is itself a section header (e.g. "Workstream 1: Project Management", or
+      // "Billing Milestones") — start a new group and don't count the header row as a task.
+      currentSection = wsMatch ? wsMatch[1].trim() : "Billing Milestones";
+      currentPhase = null;
+      currentWave = null;
+      const isFirstSection = !groups[currentSection] && order.length === 0;
+      if (!groups[currentSection]) { groups[currentSection] = []; trees[currentSection] = newTree(); order.push(currentSection); }
+      if (isFirstSection && preHeaderRows.length > 0) {
+        // Fold any setup/kickoff rows that came before the first header into this workstream.
+        groups[currentSection].push(...preHeaderRows);
+        trees[currentSection].tasks.push(...preHeaderRows);
+        preHeaderRows.length = 0;
+      }
+      continue;
+    }
+
+    if (phaseMatch && currentSection) {
+      currentPhase = { name: phaseMatch[1].trim(), tasks: [], waves: [] };
+      currentWave = null;
+      trees[currentSection].phases.push(currentPhase);
+      continue;
+    }
+
+    if (waveMatch && currentSection) {
+      currentWave = { name: waveMatch[1].trim(), tasks: [] };
+      if (currentPhase) currentPhase.waves.push(currentWave);
+      else { currentPhase = { name: "", tasks: [], waves: [currentWave] }; trees[currentSection].phases.push(currentPhase); }
+      continue;
+    }
+
+    // Prefer an explicit Workstream/Phase/Track column if the sheet has one;
+    // otherwise fall back to whichever "Workstream N: ..." section we're currently under.
+    const explicit = firstMatch(row, PLAN_WORKSTREAM_COL);
+    if (explicit) {
+      if (!groups[explicit]) { groups[explicit] = []; trees[explicit] = newTree(); order.push(explicit); }
+      groups[explicit].push(row);
+      trees[explicit].tasks.push(row);
+    } else if (currentSection) {
+      addTask(row);
+    } else {
+      // No section header seen yet — hold onto this row until the first one appears.
+      preHeaderRows.push(row);
+    }
+  }
+
+  // If the plan has no "Workstream N: ..." headers at all, these rows are genuinely unassigned.
+  if (preHeaderRows.length > 0) {
+    if (!groups["Unassigned"]) { groups["Unassigned"] = []; trees["Unassigned"] = newTree(); }
+    groups["Unassigned"].push(...preHeaderRows);
+    trees["Unassigned"].tasks.push(...preHeaderRows);
+    if (!order.includes("Unassigned")) order.push("Unassigned");
+  }
+
+  return order.map(name => {
+    const rows = groups[name];
+    const pctValues = rows.map(r => pctToNumber(firstMatch(r, PLAN_PCT_COL))).filter(v => v !== null);
+    let pct;
+    if (pctValues.length > 0) {
+      pct = Math.round(pctValues.reduce((a, b) => a + b, 0) / pctValues.length);
+    } else {
+      const completeCount = rows.filter(isTaskDone).length;
+      pct = rows.length > 0 ? Math.round((completeCount / rows.length) * 100) : 0;
+    }
+    return { name, total: rows.length, pct, rows, tree: trees[name], health: statusHealth(rows) };
+  });
+}
+// (computeWorkstreams also removes header rows from stats so they don't skew task counts)
+
+function computeStats(planRows) {
+  const total = planRows.length;
+  let complete = 0, inProgress = 0, notStarted = 0;
+  for (const row of planRows) {
+    const s = String(firstMatch(row, PLAN_STATUS_COL) || "").toLowerCase();
+    if (isTaskDone(row)) complete++;
+    else if (s.includes("progress") || s.includes("active") || s.includes("review") || s.includes("build")) inProgress++;
+    else notStarted++;
+  }
+  const overallPct = total > 0 ? Math.round((complete / total) * 100) : 0;
+  return { total, complete, inProgress, notStarted, overallPct };
+}
+
+function normalizeHealth(raw) {
+  const s = String(raw || "").toLowerCase();
+  if (s.includes("red")) return "red";
+  if (s.includes("amber") || s.includes("yellow")) return "amber";
+  if (s.includes("green")) return "green";
+  return null;
+}
+
+function hydrate(data) {
+  const planRows = (data.project_plan && data.project_plan.rows) || [];
+  const allRaidRows = (data.raid_log && data.raid_log.rows) || [];
+  const raidRows = allRaidRows.filter(row => {
+    const status = String(firstMatch(row, RAID_STATUS_COL) || "").toLowerCase();
+    return !(status.includes("done") || status.includes("closed") || status.includes("complete"));
+  });
+  const dataDate = data.generated_at ? new Date(data.generated_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "—";
+
+  document.getElementById("dash-subtitle").textContent =
+    `${data.project_plan ? data.project_plan.sheet_name : "Project Plan"} · ${data.raid_log ? data.raid_log.sheet_name : "RAID Log"}`;
+  document.getElementById("dash-meta").innerHTML =
+    `Source: <strong>Smartsheet</strong><br>Data as of <strong>${escapeHtml(dataDate)}</strong>`;
+  document.getElementById("footer-note").textContent =
+    `Source: Project Plan & RAID (Smartsheet) · Data as of ${dataDate}`;
+
+  const workstreams = computeWorkstreams(planRows);
+  const stats = computeStats(planRows);
+  lastWorkstreams = workstreams;
+  const latestComment = data.project_comment && data.project_comment.rows && data.project_comment.rows.length > 0
+    ? data.project_comment.rows[data.project_comment.rows.length - 1]
+    : null;
+  const overallHealth = (latestComment && normalizeHealth(firstMatch(latestComment, COMMENT_HEALTH_COL))) || statusHealth(planRows);
+
+  document.getElementById("exec-summary").innerHTML =
+    `The program is <strong>${stats.overallPct}% complete</strong> across <strong>${workstreams.length} workstream${workstreams.length === 1 ? "" : "s"}</strong>, with <strong>${stats.complete} of ${stats.total} tasks</strong> closed out and <strong>${stats.inProgress} in progress</strong>. ${raidRows.length > 0 ? `<strong>${raidRows.length} open RAID item${raidRows.length === 1 ? "" : "s"}</strong> are being tracked below.` : ""}`;
+
+  renderHealth(overallHealth, workstreams);
+  renderWorkstreams(workstreams, dataDate);
+  renderKpis(stats);
+  renderBreakdown(workstreams);
+  renderRaid(raidRows);
+  renderPhases(workstreams);
+  renderCompleted(workstreams);
+  renderProjectComment(data.project_comment);
+}
+
+async function loadDashboard() {
+  let data;
+  try {
+    const res = await fetch("data/dashboard-data.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("fetch failed");
+    data = await res.json();
+  } catch (err) {
+    console.warn("Falling back to sample data:", err);
+    data = SAMPLE_DATA;
+  }
+  hydrate(data);
+}
+
+// Sample data shown only if data/dashboard-data.json isn't reachable (e.g. local preview)
+const SAMPLE_DATA = {
+  generated_at: new Date().toISOString(),
+  project_plan: {
+    sheet_name: "Project Plan (sample)",
+    rows: [
+      { "Workstream": "CCaaS Migration", "Task Name": "Phase 1 SIT Build", "Status": "Complete", "% Complete": "100", "Owner": "J. Rivera", "Due Date": "2026-05-29" },
+      { "Workstream": "CCaaS Migration", "Task Name": "Phase 3 Production Build", "Status": "In Progress", "% Complete": "60", "Owner": "T. Nguyen", "Due Date": "2026-09-03" },
+      { "Workstream": "CCaaS Migration", "Task Name": "Phase 3 ORT / Testing", "Status": "At Risk", "% Complete": "10", "Owner": "T. Nguyen", "Due Date": "2026-09-08" },
+      { "Workstream": "Aspect WFM Integration", "Task Name": "Workforce Management Config", "Status": "In Progress", "% Complete": "92", "Owner": "M. Chen", "Due Date": "2026-08-25" },
+      { "Workstream": "Business Readiness & Training", "Task Name": "End User Training Rollout", "Status": "In Progress", "% Complete": "90", "Owner": "S. Patel", "Due Date": "2026-08-30" },
+      { "Workstream": "Business Readiness & Training", "Task Name": "Admin Readiness Sign-off", "Status": "Not Started", "% Complete": "0", "Owner": "S. Patel", "Due Date": "2026-09-05" },
+    ]
+  },
+  raid_log: {
+    sheet_name: "RAID Log (sample)",
+    rows: [
+      { "Type": "Risk", "Description": "Phase 3 go-live at risk pending production build completion", "Owner": "Onix Programme", "Mitigation / Note": "Production build advancing; go-live date under close watch", "Status": "Open" },
+      { "Type": "Issue", "Description": "Design restructure — business sign-off at risk for Phase 3", "Owner": "—", "Mitigation / Note": "Transfer process reviewed and agreed; pushed to next phase", "Status": "Open" },
+      { "Type": "Decision", "Description": "Outbound Dialer — GCP project location required", "Owner": "A. Siva", "Mitigation / Note": "Awaiting written confirmation", "Status": "Open" },
+    ]
+  },
+  project_comment: {
+    sheet_name: "Project Comment (sample)",
+    rows: [
+      { "Health": "Amber", "Comments": "Phase 3 production build tracking to plan; watching go-live readiness closely." },
+    ]
+  }
+};
+
+loadDashboard();
+</script>
+
+</body>
+</html>
