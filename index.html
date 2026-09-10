@@ -390,73 +390,6 @@
     font-size: 13px;
   }
 
-  /* ---------- PM Notes panel ---------- */
-  .pm-notes-panel {
-    background: var(--panel);
-    border: 1px solid var(--panel-border);
-    border-radius: 8px;
-    padding: 18px 20px;
-  }
-
-  .pm-notes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-  }
-
-  .pm-notes-meta { font-size: 11px; color: var(--muted); }
-
-  .pm-health-select { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-
-  .pm-health-opt {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-    border: 1.5px solid var(--panel-border);
-    background: var(--bg);
-    color: var(--muted);
-  }
-
-  .pm-health-opt.active-green { border-color: var(--green); background: var(--green-bg); color: var(--green); }
-  .pm-health-opt.active-amber { border-color: var(--amber); background: var(--amber-bg); color: var(--amber); }
-  .pm-health-opt.active-red { border-color: var(--red); background: var(--red-bg); color: var(--red); }
-
-  .pm-notes-text { font-size: 14px; line-height: 1.65; color: var(--text); white-space: pre-wrap; }
-
-  .pm-comment-history {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid var(--panel-border);
-  }
-
-  .pm-comment-history .pm-history-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .pm-comment-item {
-    display: flex;
-    gap: 10px;
-    align-items: baseline;
-    font-size: 13px;
-    color: var(--muted);
-    padding: 5px 0;
-  }
-
-  .pm-comment-item .health-dot { flex-shrink: 0; }
-  .pm-comment-item span:last-child { color: var(--text); }
-
   footer {
     margin-top: 24px;
     font-size: 11px;
@@ -485,11 +418,6 @@
 <section>
   <div class="section-title">Program Health</div>
   <div class="health-row" id="health-row"></div>
-</section>
-
-<section>
-  <div class="section-title">Program Manager Notes</div>
-  <div class="pm-notes-panel" id="pm-notes-panel">Loading…</div>
 </section>
 
 <section>
@@ -568,14 +496,6 @@ const RAID_MIT_COL = ["Mitigation / Note", "Mitigation", "Notes", "Details"];
 const RAID_STATUS_COL = ["Status"];
 const RAID_DONE_COL = ["Done"];
 
-// ---- Project Comment sheet (PM-entered health + comments) ----
-// Pulled by pull_smartsheet_data.py from a Smartsheet the PM edits directly
-// (same sheet-based source of truth as everything else on this dashboard),
-// so there's no separate manual file and no risk of it being overwritten —
-// it just comes down with the rest of the scheduled pull.
-const COMMENT_HEALTH_COL = ["Health"];
-const COMMENT_TEXT_COL = ["Comments", "Comment"];
-
 let lastWorkstreams = [];
 
 function firstMatch(row, candidates) {
@@ -621,44 +541,6 @@ function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, m => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[m]));
-}
-
-function renderProjectComment(projectComment) {
-  const panel = document.getElementById("pm-notes-panel");
-  const rows = (projectComment && projectComment.rows) || [];
-  const healthLabel = h => h === "amber" ? "Amber" : h.charAt(0).toUpperCase() + h.slice(1);
-
-  if (rows.length === 0) {
-    panel.innerHTML = `<div class="pm-notes-text" style="color:var(--muted)">No comments yet — add a row to the Project Comment sheet in Smartsheet.</div>`;
-    return;
-  }
-
-  // Newest entry is the last row added to the sheet.
-  const latest = rows[rows.length - 1];
-  const earlier = rows.slice(0, -1).reverse();
-  const health = normalizeHealth(firstMatch(latest, COMMENT_HEALTH_COL)) || "green";
-  const comment = firstMatch(latest, COMMENT_TEXT_COL) || "";
-
-  panel.innerHTML = `
-    <div class="pm-notes-header">
-      <span class="pm-notes-meta">Source: Smartsheet · ${escapeHtml(projectComment.sheet_name || "Project Comment")}</span>
-    </div>
-    <div class="pm-health-select">
-      <span class="pm-health-opt active-${health}">
-        <span class="health-dot dot-${health}"></span>${healthLabel(health)}
-      </span>
-    </div>
-    <div class="pm-notes-text">${comment ? escapeHtml(comment).replace(/\n/g, "<br>") : '<span style="color:var(--muted)">No comment text on the latest entry.</span>'}</div>
-    ${earlier.length > 0 ? `
-      <div class="pm-comment-history">
-        <div class="pm-history-label">Earlier updates</div>
-        ${earlier.map(r => {
-          const h = normalizeHealth(firstMatch(r, COMMENT_HEALTH_COL)) || "green";
-          const c = firstMatch(r, COMMENT_TEXT_COL) || "";
-          return `<div class="pm-comment-item"><span class="health-dot dot-${h}"></span><span>${escapeHtml(c)}</span></div>`;
-        }).join("")}
-      </div>` : ""}
-  `;
 }
 
 function renderHealth(overallHealth, workstreams) {
@@ -968,14 +850,6 @@ function computeStats(planRows) {
   return { total, complete, inProgress, notStarted, overallPct };
 }
 
-function normalizeHealth(raw) {
-  const s = String(raw || "").toLowerCase();
-  if (s.includes("red")) return "red";
-  if (s.includes("amber") || s.includes("yellow")) return "amber";
-  if (s.includes("green")) return "green";
-  return null;
-}
-
 function hydrate(data) {
   const planRows = (data.project_plan && data.project_plan.rows) || [];
   const allRaidRows = (data.raid_log && data.raid_log.rows) || [];
@@ -992,10 +866,7 @@ function hydrate(data) {
   const workstreams = computeWorkstreams(planRows);
   const stats = computeStats(planRows);
   lastWorkstreams = workstreams;
-  const latestComment = data.project_comment && data.project_comment.rows && data.project_comment.rows.length > 0
-    ? data.project_comment.rows[data.project_comment.rows.length - 1]
-    : null;
-  const overallHealth = (latestComment && normalizeHealth(firstMatch(latestComment, COMMENT_HEALTH_COL))) || statusHealth(planRows);
+  const overallHealth = statusHealth(planRows);
 
   document.getElementById("exec-summary").innerHTML =
     `The program is <strong>${stats.overallPct}% complete</strong> across <strong>${workstreams.length} workstream${workstreams.length === 1 ? "" : "s"}</strong>, with <strong>${stats.complete} of ${stats.total} tasks</strong> closed out and <strong>${stats.inProgress} in progress</strong>. ${raidRows.length > 0 ? `<strong>${raidRows.length} open RAID item${raidRows.length === 1 ? "" : "s"}</strong> are being tracked below.` : ""}`;
@@ -1007,7 +878,6 @@ function hydrate(data) {
   renderRaid(raidRows);
   renderPhases(workstreams);
   renderCompleted(workstreams);
-  renderProjectComment(data.project_comment);
 }
 
 async function loadDashboard() {
@@ -1043,12 +913,6 @@ const SAMPLE_DATA = {
       { "Type": "Risk", "Description": "Phase 3 go-live at risk pending production build completion", "Owner": "Onix Programme", "Mitigation / Note": "Production build advancing; go-live date under close watch", "Status": "Open" },
       { "Type": "Issue", "Description": "Design restructure — business sign-off at risk for Phase 3", "Owner": "—", "Mitigation / Note": "Transfer process reviewed and agreed; pushed to next phase", "Status": "Open" },
       { "Type": "Decision", "Description": "Outbound Dialer — GCP project location required", "Owner": "A. Siva", "Mitigation / Note": "Awaiting written confirmation", "Status": "Open" },
-    ]
-  },
-  project_comment: {
-    sheet_name: "Project Comment (sample)",
-    rows: [
-      { "Health": "Amber", "Comments": "Phase 3 production build tracking to plan; watching go-live readiness closely." },
     ]
   }
 };
