@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-10T19:07:50.377499+00:00",
+  "generated_at": "2026-09-10T19:47:07.304509+00:00",
   "project_plan": {
     "sheet_name": "REI | Project Plan",
     "columns": [
@@ -1390,8 +1390,8 @@
     ],
     "rows": [
       {
-        "Health": "Red",
-        "Comments": "Definity issued Project Termination Notice",
+        "Health": "Green",
+        "Comments": "Definity issued Project Termination Notice - REI",
         "_row_id": 2906934242049924
       }
     ]
