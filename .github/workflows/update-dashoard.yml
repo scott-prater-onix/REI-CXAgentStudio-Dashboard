@@ -29,7 +29,6 @@ jobs:
           SMARTSHEET_TOKEN: ${{ secrets.SMARTSHEET_TOKEN }}
           PROJECT_PLAN_SHEET_ID: ${{ secrets.PROJECT_PLAN_SHEET_ID }}
           RAID_LOG_SHEET_ID: ${{ secrets.RAID_LOG_SHEET_ID }}
-          PROJECT_COMMENT_SHEET_ID: ${{ secrets.PROJECT_COMMENT_SHEET_ID }}
           OUTPUT_PATH: data/dashboard-data.json
         run: python pull_smartsheet_data.py
 
