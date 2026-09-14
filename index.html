@@ -477,6 +477,12 @@ const WORKSTREAM_HEADER_RE = /^workstreams?\s*\d+(?:\s*(?:-|&|and)\s*\d+)?\s*:\s
 // not part of that workstream's actual scope, so it's treated as its own section
 // here. Matches both singular ("Billing Milestone", used by REI) and plural.
 const BILLING_MILESTONES_HEADER_RE = /^billing milestones?$/i;
+// The plan's very first row is often just the document/plan title (e.g. "PHASED
+// IMPLEMENTATION PROJECT PLAN"), with Smartsheet auto-rolling up a Status/% from
+// its children the same way it would for a real task row — so it can't be told
+// apart from a task by emptiness alone. It isn't a task and shouldn't be counted
+// or folded into a workstream, so it's matched and skipped outright.
+const PLAN_TITLE_RE = /^phased implementation project plan$/i;
 // Sub-section headers used inconsistently within some workstreams — not every
 // workstream has these, so grouping falls back to a flat task list where absent.
 const PHASE_HEADER_RE = /^phase\s*\d+\s*:\s*(.+)$/i;
@@ -763,6 +769,12 @@ function computeWorkstreams(planRows) {
 
   for (const row of planRows) {
     const taskName = String(firstMatch(row, PLAN_TASK_COL) || "");
+
+    if (PLAN_TITLE_RE.test(taskName.trim())) {
+      // The plan's own title row — not a task, skip it entirely.
+      continue;
+    }
+
     const wsMatch = taskName.match(WORKSTREAM_HEADER_RE);
     const billingMatch = !wsMatch && BILLING_MILESTONES_HEADER_RE.test(taskName.trim());
     const phaseMatch = (!wsMatch && !billingMatch) ? taskName.match(PHASE_HEADER_RE) : null;
