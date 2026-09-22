@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-21T11:15:03.406608+00:00",
+  "generated_at": "2026-09-22T11:14:50.333612+00:00",
   "project_plan": {
     "sheet_name": "REI | Project Plan",
     "columns": [
@@ -1147,12 +1147,12 @@
         "Assigned To": "Ian Reinhardt",
         "Date Assigned": "2026-09-04",
         "Due": "2026-09-25",
-        "Completion Date": null,
+        "Completion Date": "2026-09-18",
         "Duration": "16d",
         "Priority": "Medium",
-        "Progress": "50%",
-        "Done": null,
-        "Notes": "Is this redundant with Betsy providing external vendor access?",
+        "Progress": "100%",
+        "Done": true,
+        "Notes": "Frequency data isn't a requirement",
         "_row_id": 2613448421277572
       },
       {
@@ -1167,8 +1167,8 @@
         "Completion Date": "2026-09-18",
         "Duration": "11d",
         "Priority": "High",
-        "Progress": "50%",
-        "Done": null,
+        "Progress": "100%",
+        "Done": true,
         "Notes": null,
         "_row_id": 7398523025358724
       },
@@ -1181,11 +1181,11 @@
         "Assigned To": "Ian Reinhardt",
         "Date Assigned": "2026-09-04",
         "Due": "2026-09-23",
-        "Completion Date": null,
+        "Completion Date": "2026-09-18",
         "Duration": "14d",
         "Priority": "Medium",
-        "Progress": "50%",
-        "Done": null,
+        "Progress": "100%",
+        "Done": true,
         "Notes": "Received 4 scenarios with initial documentation; is there more?",
         "_row_id": 1769023491145604
       },
@@ -1202,7 +1202,7 @@
         "Duration": "11d",
         "Priority": "Medium",
         "Progress": "100%",
-        "Done": null,
+        "Done": true,
         "Notes": null,
         "_row_id": 6272623118516100
       },
@@ -1232,11 +1232,11 @@
         "Assigned To": "Matthew Garl",
         "Date Assigned": "2026-09-17",
         "Due": "2026-09-23",
-        "Completion Date": null,
+        "Completion Date": "2026-09-21",
         "Duration": "5d",
         "Priority": "Medium",
-        "Progress": "0%",
-        "Done": null,
+        "Progress": "100%%",
+        "Done": true,
         "Notes": null,
         "_row_id": 7907901861003140
       },
