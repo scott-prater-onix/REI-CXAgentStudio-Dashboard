@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-05T11:16:40.328973+00:00",
+  "generated_at": "2026-10-06T11:15:26.708429+00:00",
   "project_plan": {
     "sheet_name": "REI | Project Plan",
     "columns": [
@@ -545,7 +545,7 @@
       {
         "Risk": null,
         "Task Name": "Use Case 2: Order Fulfillment",
-        "Status": "In Progress",
+        "Status": "Canceled",
         "Assigned To": "Milad Tabrizi",
         "Start Date": "2026-09-15T08:00:00",
         "End Date": "2026-10-09T16:59:59",
@@ -560,7 +560,7 @@
       {
         "Risk": null,
         "Task Name": "Build VA Architecture",
-        "Status": "In Progress",
+        "Status": "Canceled",
         "Assigned To": "Milad Tabrizi",
         "Start Date": "2026-09-15T08:00:00",
         "End Date": "2026-10-09T16:59:59",
@@ -575,7 +575,7 @@
       {
         "Risk": null,
         "Task Name": "Tooling / Integration to APIs",
-        "Status": "In Progress",
+        "Status": "Canceled",
         "Assigned To": "Milad Tabrizi",
         "Start Date": "2026-09-15T08:00:00",
         "End Date": "2026-10-07T16:59:59",
@@ -801,7 +801,7 @@
         "Risk": null,
         "Task Name": "Monitoring (Chat)",
         "Status": "In Progress",
-        "Assigned To": null,
+        "Assigned To": "Scott Prater",
         "Start Date": "2026-09-14T08:00:00",
         "End Date": "2026-10-15T16:59:59",
         "%": "100%",
@@ -815,8 +815,8 @@
       {
         "Risk": null,
         "Task Name": "GECX Capability Deep Dive / Training",
-        "Status": null,
-        "Assigned To": null,
+        "Status": "In Progress",
+        "Assigned To": "Scott Prater",
         "Start Date": null,
         "End Date": null,
         "%": null,
@@ -824,7 +824,7 @@
         "Duration": null,
         "Deliverable": null,
         "Bill": null,
-        "Notes": null,
+        "Notes": "within CXAS, guardrails, how to configure",
         "_row_id": 3423019846860676
       },
       {
@@ -845,7 +845,7 @@
       {
         "Risk": null,
         "Task Name": "Ask REI Asset Review and Reuse Analysis",
-        "Status": "In Progress",
+        "Status": "Complete",
         "Assigned To": "Manasa Padukone",
         "Start Date": "2026-09-14T08:00:00",
         "End Date": "2026-10-01T16:59:59",
@@ -860,7 +860,7 @@
       {
         "Risk": null,
         "Task Name": "Customer Service Golden Set Creation",
-        "Status": "In Progress",
+        "Status": "Complete",
         "Assigned To": "Ian Reinhardt",
         "Start Date": "2026-09-21T08:00:00",
         "End Date": "2026-10-15T16:59:59",
@@ -1680,6 +1680,23 @@
         "Done": true,
         "Notes": null,
         "_row_id": 8705772773441412
+      },
+      {
+        "Risk": null,
+        "Org Owner": "REI",
+        "Category": "Action",
+        "Name": "GCloud Permission",
+        "Description": "Assign the following IAM roles to alahmad@rei.com in the contactcenter-dev-5ce9 project:\nSecret Manager Admin (roles/secretmanager.admin), Cloud Run Admin (roles/run.admin), Artifact Registry Administrator (roles/artifactregistry.admin), Project IAM Admin (roles/resourcemanager.projectIamAdmin)",
+        "Assigned To": "Anthony Ma",
+        "Date Assigned": "2026-10-05",
+        "Due": "2026-10-06",
+        "Completion Date": null,
+        "Duration": "2d",
+        "Priority": "High",
+        "Progress": "25%",
+        "Done": null,
+        "Notes": null,
+        "_row_id": 3393122446868356
       }
     ]
   }
