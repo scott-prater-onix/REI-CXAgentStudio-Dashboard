@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T11:16:43.865783+00:00",
+  "generated_at": "2026-10-09T11:16:15.138045+00:00",
   "project_plan": {
     "sheet_name": "REI | Project Plan",
     "columns": [
@@ -839,7 +839,7 @@
         "Duration": null,
         "Deliverable": null,
         "Bill": null,
-        "Notes": null,
+        "Notes": "REI Owned? - Discuss with REI/Mary",
         "_row_id": 5674819660545924
       },
       {
@@ -884,7 +884,7 @@
         "Duration": null,
         "Deliverable": null,
         "Bill": null,
-        "Notes": null,
+        "Notes": "REI Owned? - Discuss with REI/Mary",
         "_row_id": 2297119940018052
       },
       {
@@ -899,7 +899,7 @@
         "Duration": null,
         "Deliverable": null,
         "Bill": null,
-        "Notes": null,
+        "Notes": "REI Owned? - Discuss with REI/Mary",
         "_row_id": 4548919753703300
       },
       {
@@ -914,7 +914,7 @@
         "Duration": null,
         "Deliverable": null,
         "Bill": null,
-        "Notes": null,
+        "Notes": "REI Owned? - Discuss with REI/Mary",
         "_row_id": 45320126332804
       },
       {
@@ -929,7 +929,7 @@
         "Duration": null,
         "Deliverable": null,
         "Bill": null,
-        "Notes": null,
+        "Notes": "REI Owned? - Discuss with REI/Mary",
         "_row_id": 8946966264807300
       },
       {
@@ -1472,8 +1472,8 @@
         "Completion Date": null,
         "Duration": "11d",
         "Priority": "Low",
-        "Progress": "85%",
-        "Done": false,
+        "Progress": "100%",
+        "Done": true,
         "Notes": null,
         "_row_id": 1107654349422468
       },
@@ -1574,8 +1574,8 @@
         "Completion Date": null,
         "Duration": "24d",
         "Priority": "Medium",
-        "Progress": "0%",
-        "Done": null,
+        "Progress": "100%",
+        "Done": true,
         "Notes": null,
         "_row_id": 1487548514434948
       },
@@ -1621,11 +1621,11 @@
         "Description": "Integrate the virtual agent into the website using the deployment parameters.  Test the functionality of switching between the proprietary and the new components.",
         "Assigned To": "Siddardha Gogineni",
         "Date Assigned": "2026-10-01",
-        "Due": "2026-10-05",
+        "Due": "2026-10-09",
         "Completion Date": null,
-        "Duration": "3d",
+        "Duration": "7d",
         "Priority": "High",
-        "Progress": "0%",
+        "Progress": "50%",
         "Done": null,
         "Notes": null,
         "_row_id": 4713075405488004
@@ -1642,7 +1642,7 @@
         "Completion Date": null,
         "Duration": "7d",
         "Priority": "Medium",
-        "Progress": "0%",
+        "Progress": "25%",
         "Done": null,
         "Notes": null,
         "_row_id": 6453972959756164
@@ -1660,8 +1660,8 @@
         "Duration": "11d",
         "Priority": "Medium",
         "Progress": "25%",
-        "Done": null,
-        "Notes": null,
+        "Done": true,
+        "Notes": "This is blocked due to using the Gladly widget / UI.",
         "_row_id": 4202173146070916
       },
       {
@@ -1689,14 +1689,31 @@
         "Description": "Assign the following IAM roles to alahmad@rei.com in the contactcenter-dev-5ce9 project:\nSecret Manager Admin (roles/secretmanager.admin), Cloud Run Admin (roles/run.admin), Artifact Registry Administrator (roles/artifactregistry.admin), Project IAM Admin (roles/resourcemanager.projectIamAdmin)",
         "Assigned To": "Anthony Ma",
         "Date Assigned": "2026-10-05",
-        "Due": "2026-10-06",
+        "Due": "2026-10-09",
         "Completion Date": null,
-        "Duration": "2d",
+        "Duration": "5d",
         "Priority": "High",
         "Progress": "25%",
         "Done": null,
-        "Notes": null,
+        "Notes": "This is past due - dependency for testing end to end experience",
         "_row_id": 3393122446868356
+      },
+      {
+        "Risk": null,
+        "Org Owner": "Onix-Implementation",
+        "Category": "Issue",
+        "Name": "Disabled Custom Channels",
+        "Description": "Custom channels remain disabled in Gladly, forcing the current build to integrate with the existing REI widget.",
+        "Assigned To": "Scott Prater",
+        "Date Assigned": "2026-10-08",
+        "Due": "2026-10-08",
+        "Completion Date": "2026-10-08",
+        "Duration": "1d",
+        "Priority": "High",
+        "Progress": "100%",
+        "Done": null,
+        "Notes": null,
+        "_row_id": 4952825807241092
       }
     ]
   }
