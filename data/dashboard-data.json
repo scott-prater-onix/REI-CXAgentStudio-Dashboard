@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-30T16:58:19.557437+00:00",
+  "generated_at": "2026-10-31T15:59:43.276640+00:00",
   "project_plan": {
     "sheet_name": "REI | Project Plan",
     "columns": [
@@ -414,7 +414,7 @@
         "Assigned To": "Javier Pina",
         "Start Date": "2026-09-03T08:00:00",
         "End Date": "2026-10-02T16:59:59",
-        "%": "%",
+        "%": "0%",
         "Predecessors": null,
         "Duration": "22d",
         "Deliverable": null,
@@ -1009,7 +1009,7 @@
       },
       {
         "Risk": null,
-        "Task Name": "2-week post implementation support (config defects only)",
+        "Task Name": "2-week post implementation support (config defects)",
         "Status": "Not Started",
         "Assigned To": "Milad Tabrizi",
         "Start Date": "2026-11-05T08:00:00",
@@ -2250,7 +2250,7 @@
         "Progress": null,
         "Done": false,
         "Notes": null,
-        "Flag to discuss": true,
+        "Flag to discuss": false,
         "Column16": null,
         "Column17": null,
         "Column18": null,
@@ -2310,8 +2310,8 @@
         "Completion Date": "2026-10-06",
         "Duration": "1d",
         "Priority": "Medium",
-        "Progress": null,
-        "Done": null,
+        "Progress": "100%",
+        "Done": true,
         "Notes": null,
         "Flag to discuss": true,
         "Column16": null,
